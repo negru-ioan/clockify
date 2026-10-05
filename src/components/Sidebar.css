@@ -1,0 +1,220 @@
+aside {
+  width: 244px;
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  background: #16171c;
+  border-right: 1px solid #282930;
+  padding: 30px 18px;
+  display: flex;
+  flex-direction: column;
+}
+
+.brand {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+  font-size: 26px;
+  font-weight: 700;
+  letter-spacing: -1px;
+  padding: 0 9px;
+}
+
+.brand-icon {
+  color: #aea5ff;
+  display: flex;
+}
+
+.local {
+  font-size: 9px;
+  color: #a3a0b9;
+  border: 1px solid #393640;
+  padding: 4px;
+  border-radius: 4px;
+  letter-spacing: 1px;
+  margin-left: 3px;
+}
+
+.workspace {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  border: 1px solid #303139;
+  border-radius: 8px;
+  padding: 13px 10px;
+  margin: 32px 0;
+}
+
+.workspace strong,
+.profile strong {
+  font-size: 12px;
+}
+
+.workspace small,
+.profile small {
+  display: block;
+  color: #7c7e8c;
+  font-size: 11px;
+  margin-top: 5px;
+}
+
+.workspace > svg {
+  margin-left: auto;
+  color: #737583;
+}
+
+.avatar {
+  width: 33px;
+  height: 33px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  background: #30313d;
+  color: #c4c1d8;
+  font-size: 11px;
+}
+
+.purple {
+  border-radius: 7px;
+  background: #a99aff20;
+  color: #bdb3ff;
+}
+
+.nav-label {
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  color: #626575;
+  padding: 0 12px;
+  margin-bottom: 13px;
+}
+
+nav button {
+  background: none;
+  color: #8f91a1;
+  width: 100%;
+  justify-content: flex-start;
+  padding: 13px 14px;
+  border-radius: 7px;
+  margin-bottom: 6px;
+  font-size: 13px;
+}
+
+nav button.active {
+  background: #a292ff17;
+  color: #c2b8ff;
+}
+
+nav button.active:before {
+  content: "";
+  position: absolute;
+  left: 0;
+  height: 20px;
+  width: 3px;
+  background: #ad9aff;
+  border-radius: 0 3px 3px 0;
+}
+
+.aside-bottom {
+  margin-top: auto;
+}
+
+.storage {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+  border-bottom: 1px solid #2a2b32;
+  padding: 16px 0 24px;
+  color: #6f7380;
+}
+
+.storage strong {
+  font-size: 10px;
+  color: #a0a3b0;
+  font-weight: 500;
+}
+
+.storage small {
+  display: block;
+  font-size: 10px;
+  margin-top: 5px;
+}
+
+.dot {
+  width: 5px;
+  height: 5px;
+  background: #89bfa6;
+  border-radius: 50%;
+  margin-left: auto;
+}
+
+.profile {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  padding: 23px 8px 0;
+}
+
+@media (max-width: 1000px) {
+  aside {
+    width: 200px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .brand {
+    font-size: 22px;
+  }
+}
+
+@media (max-width: 1000px) {
+  .local {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  aside {
+    position: static;
+    width: 100%;
+    height: auto;
+    padding: 17px;
+    border-right: 0;
+    border-bottom: 1px solid #30313a;
+  }
+}
+
+@media (max-width: 700px) {
+  .brand {
+    padding: 0;
+  }
+}
+
+@media (max-width: 700px) {
+  .workspace,
+  .aside-bottom,
+  .nav-label {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  nav {
+    display: flex;
+    margin-top: 18px;
+  }
+}
+
+@media (max-width: 700px) {
+  nav button {
+    margin: 0;
+    font-size: 11px;
+    justify-content: center;
+    padding: 10px 6px;
+  }
+}
+
+@media (max-width: 700px) {
+  nav button.active:before {
+    display: none;
+  }
+}

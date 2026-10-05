@@ -1,0 +1,91 @@
+.stats {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 16px;
+  margin-bottom: 25px;
+}
+
+.stats > div {
+  background: #191a20;
+  border: 1px solid #2c2d36;
+  border-radius: 10px;
+  padding: 19px 22px;
+}
+
+.stats > div > span {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  color: #9b9daa;
+  font-size: 11px;
+}
+
+.stats svg {
+  color: #6e6b83;
+}
+
+.stats strong {
+  display: block;
+  font-family: Manrope, sans-serif;
+  font-size: 30px;
+  font-weight: 650;
+  margin: 13px 0 7px;
+  letter-spacing: -1px;
+}
+
+.stats strong small {
+  font:
+    11px "DM Sans",
+    sans-serif;
+  color: #777b8a;
+  letter-spacing: 0;
+  margin-left: 9px;
+}
+
+.stats p {
+  font-size: 10px;
+  color: #666b7a;
+}
+
+@media (max-width: 700px) {
+  .stats {
+    gap: 8px;
+  }
+}
+
+@media (max-width: 700px) {
+  .stats > div {
+    padding: 13px 10px;
+  }
+}
+
+@media (max-width: 700px) {
+  .stats > div > span {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 700px) {
+  .stats svg {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .stats strong {
+    font-size: 24px;
+  }
+}
+
+@media (max-width: 700px) {
+  .stats strong small {
+    display: none;
+  }
+}
+
+@media (max-width: 700px) {
+  .stats p {
+    font-size: 9px;
+    line-height: 1.5;
+  }
+}

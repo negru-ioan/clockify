@@ -1,0 +1,35 @@
+.catalog {
+  background: #191a20;
+  border: 1px solid #30313a;
+  border-radius: 9px;
+  padding: 23px;
+  margin-bottom: 18px;
+}
+
+.catalog h2 {
+  color: #c9b9ff;
+  margin-bottom: 20px;
+}
+
+.catalog h3 {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 12px;
+  margin: 20px 0 12px;
+}
+
+.catalog h3 small {
+  color: #707585;
+  margin-left: auto;
+}
+
+.tag-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+}
+
+.tag-list .tag {
+  margin: 0;
+}

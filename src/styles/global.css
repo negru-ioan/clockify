@@ -1,0 +1,275 @@
+@import url("https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;450;500;550;600;650;700&family=Manrope:wght@500;600;650;700;750;800&display=swap");
+
+:root {
+  font-family: "DM Sans", sans-serif;
+  color: #ececf3;
+  background: #101115;
+  font-synthesis: none;
+  font-size: 14px;
+  color-scheme: dark;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+input,
+select {
+  font: inherit;
+}
+
+button {
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 9px;
+  transition: 0.15s;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: wait;
+}
+
+button:hover {
+  filter: brightness(1.15);
+}
+
+input,
+select {
+  width: 100%;
+  background: #18191f;
+  border: 1px solid #33343d;
+  color: #ececf3;
+  border-radius: 7px;
+  padding: 12px 13px;
+  outline: none;
+  height: 44px;
+}
+
+input:focus,
+select:focus {
+  border-color: #a29aff;
+  box-shadow: 0 0 0 3px #9280ff15;
+}
+
+input::placeholder {
+  color: #686a79;
+}
+
+label {
+  display: block;
+  color: #aeb0bf;
+  font-size: 12px;
+  font-weight: 500;
+}
+
+label input,
+label select {
+  margin-top: 9px;
+  font-size: 13px;
+}
+
+button {
+  border: 0;
+}
+
+h2,
+h3,
+p {
+  margin: 0;
+}
+
+.secondary {
+  background: #1c1d24;
+  border: 1px solid #373840;
+  color: #d4d4e0;
+  border-radius: 7px;
+  padding: 11px 15px;
+  font-size: 12px;
+}
+
+.primary {
+  background: #b4a1fc;
+  color: #211a39;
+  font-weight: 650;
+  border-radius: 7px;
+  padding: 12px 17px;
+  font-size: 12px;
+  min-height: 41px;
+}
+
+.entry-card {
+  border: 1px solid #35323f;
+  border-radius: 10px;
+  background: #1a1b22;
+  margin-bottom: 31px;
+  overflow: hidden;
+}
+
+.section-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 19px 23px;
+  border-bottom: 1px solid #2d2d38;
+}
+
+.section-heading > div {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.mini-icon {
+  color: #b9a7f6;
+  display: flex;
+}
+
+h2 {
+  font-size: 14px;
+  font-weight: 600;
+}
+
+.pill {
+  font-size: 10px;
+  background: #24232d;
+  color: #9591ac;
+  border: 1px solid #383443;
+  padding: 5px 9px;
+  border-radius: 5px;
+}
+
+.entry-card form {
+  padding: 21px 23px 0;
+}
+
+.form-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 18px;
+  margin: 21px 0 25px;
+}
+
+.form-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  border-top: 1px solid #2d2d36;
+  padding: 17px 0;
+}
+
+.form-footer p {
+  display: flex;
+  align-items: center;
+  gap: 7px;
+  font-size: 10px;
+  color: #767a8a;
+}
+
+.form-footer > div {
+  display: flex;
+  gap: 8px;
+}
+
+.muted {
+  color: #76798a;
+}
+
+.tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 1px solid #37363f;
+  border-radius: 4px;
+  background: #24232a;
+  color: #aaa4ba;
+  font-size: 9px;
+  padding: 4px 6px;
+  margin-left: 9px;
+}
+
+.icon-button {
+  color: #727687;
+  background: transparent;
+  padding: 6px;
+}
+
+.error {
+  color: #f4a6a6;
+  display: block;
+  margin-top: 7px;
+  font-size: 10px;
+}
+
+@media (max-width: 1000px) {
+  .form-footer p {
+    max-width: 200px;
+    line-height: 1.5;
+  }
+}
+
+@media (max-width: 1000px) {
+  .form-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 700px) {
+  .section-heading,
+  .entry-card form {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+}
+
+@media (max-width: 700px) {
+  .pill {
+    font-size: 8px;
+  }
+}
+
+@media (max-width: 700px) {
+  .form-grid {
+    gap: 14px;
+  }
+}
+
+@media (max-width: 700px) {
+  .form-grid > label:nth-child(3) {
+    grid-column: 1/-1;
+  }
+}
+
+@media (max-width: 700px) {
+  .form-footer {
+    gap: 12px;
+    align-items: flex-end;
+  }
+}
+
+@media (max-width: 700px) {
+  .form-footer p {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 700px) {
+  .primary {
+    padding: 11px;
+    font-size: 11px;
+    white-space: nowrap;
+  }
+}
+
+@media (max-width: 700px) {
+  .tag {
+    margin-left: 0;
+  }
+}
