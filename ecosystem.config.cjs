@@ -9,7 +9,7 @@ module.exports = {
 			exec_mode: "fork",
 			autorestart: true,
 			watch: false,
-			env: { NODE_ENV: "production", PORT: "9999" },
+			env: { NODE_ENV: "production", PORT: "9999", HOST: "0.0.0.0" },
 		},
 	],
 };

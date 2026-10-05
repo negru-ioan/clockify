@@ -11,7 +11,7 @@ npm install
 npm run dev
 ```
 
-Open http://localhost:9999. The API listens only on 127.0.0.1:3001.
+Open http://localhost:9999. The development API runs on port 3001.
 
 For production locally:
 
@@ -35,7 +35,7 @@ Open http://127.0.0.1:9999. Run `npm test` for API/export checks.
 
 All records and choices are in `data/clockify.sqlite`, excluded from Git. Stop the server before copying this file as a backup or moving it to another computer. Keep the `server/template.xlsx` file with the project. No cloud account is required. The app loads an optional Google Font; system fonts are used offline. Dependencies need internet access only for installation.
 
-This is a local manual time tracker, not a hosted multi-user service. Keep descriptions technical/professional; do not enter personal or sensitive notes. Updated templates are not automatically imported; add new choices through Directories.
+This is a personal manual time tracker, not a hosted multi-user service. Keep descriptions technical/professional; do not enter personal or sensitive notes. Updated templates are not automatically imported; add new choices through Directories.
 
 ## Frontend structure
 
@@ -67,3 +67,7 @@ npx pm2 status
 For restoring managed processes after restarting PM2, run `npx pm2 save`. To enable launch at system startup, run `npx pm2 startup` and follow its platform-specific instructions, then `npx pm2 save`.
 
 Development also uses port 9999 for Vite, with its API on port 3001. Stop the production PM2 app before starting development since they share website port 9999. Standalone `npm start` defaults to 9999; set `PORT` to override it.
+
+## LAN access
+
+The website listens on all network interfaces (`0.0.0.0`) by default. After `npm run start-pm2`, open `http://192.168.1.82:9999` from another device on your LAN (use your computer’s current LAN IP). Same-origin API requests are accepted from that address. Set `HOST=127.0.0.1` for loopback-only use. The app has no authentication, so devices that can reach its port can view and modify timesheet data.

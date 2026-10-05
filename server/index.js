@@ -21,7 +21,7 @@ export const app = express();
 app.use(express.json());
 app.use((req, res, next) => {
 	const origin = req.get("origin");
-	if (origin && !/^http:\/\/localhost(?::\d+)?$|^http:\/\/127\.0\.0\.1(?::\d+)?$/.test(origin)) return res.status(403).json({ error: "Origin not allowed" });
+	if (origin && origin !== `${req.protocol}://${req.get("host")}` && !/^http:\/\/localhost(?::\d+)?$|^http:\/\/127\.0\.0\.1(?::\d+)?$/.test(origin)) return res.status(403).json({ error: "Origin not allowed" });
 	next();
 });
 const entries = () => db.prepare("SELECT e.*,p.name projectName,p.exportName,p.client FROM entries e JOIN projects p ON p.id=e.project ORDER BY date DESC,id DESC").all();
@@ -141,4 +141,5 @@ app.use((err, req, res, next) => {
 	res.status(500).json({ error: "The operation failed. Please try again." });
 });
 const port = Number(process.env.PORT || 9999);
-if (process.env.NODE_ENV !== "test") app.listen(port, "127.0.0.1", () => console.log(`Clockify: http://127.0.0.1:${port}`));
+const host = process.env.HOST || "0.0.0.0";
+if (process.env.NODE_ENV !== "test") app.listen(port, host, () => console.log(`Clockify listening on ${host}:${port}`));

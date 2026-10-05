@@ -4,7 +4,7 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "concurrently -k \"PORT=3001 node --watch server/index.js\" \"vite --host 127.0.0.1\"",
+    "dev": "concurrently -k \"PORT=3001 node --watch server/index.js\" \"vite --host 0.0.0.0\"",
     "build": "tsc -b && vite build",
     "start": "node server/index.js",
     "start-pm2": "npm run build && pm2 startOrRestart ecosystem.config.cjs --only clockify --update-env",
