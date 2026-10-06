@@ -71,3 +71,15 @@
   height: 50px;
   border-radius: 12px;
 }
+
+.dialog .export-protection {
+  display: flex;
+  align-items: center;
+  gap: 9px;
+}
+.dialog .export-protection input {
+  width: 16px;
+  height: 16px;
+  margin: 0;
+  accent-color: #b4a1fc;
+}

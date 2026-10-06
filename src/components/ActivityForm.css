@@ -2,3 +2,11 @@
   height: 49px;
   background: #14151b;
 }
+
+.duration-help {
+  display: block;
+  margin-top: 7px;
+  font-size: 10px;
+  color: #9395a5;
+  line-height: 1.5;
+}

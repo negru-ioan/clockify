@@ -39,6 +39,12 @@
   padding-left: 8px;
 }
 
+.search input:focus {
+  outline: none;
+  border: none;
+  box-shadow: none;
+}
+
 .empty {
   background: #17181e;
   border: 1px dashed #32333e;
@@ -185,6 +191,27 @@
 
 @media (max-width: 700px) {
   .row-mark {
+    display: none;
+  }
+}
+
+.entry-time-range {
+  display: flex;
+  align-items: center;
+  flex-shrink: 0;
+  white-space: nowrap;
+  color: #969bad;
+  font-size: 11px;
+  gap: 7px;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (max-width: 700px) {
+  .entry-time-range {
+    font-size: 10px;
+    gap: 3px;
+  }
+  .entry-time-range > svg {
     display: none;
   }
 }

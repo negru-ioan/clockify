@@ -1,0 +1,51 @@
+.description-search {
+  position: relative;
+}
+.description-search > input {
+  margin-top: 9px;
+  height: 49px;
+  background: #14151b;
+}
+.description-suggestions {
+  position: absolute;
+  top: calc(100% + 5px);
+  left: 0;
+  right: 0;
+  z-index: 30;
+  max-height: 300px;
+  overflow-y: auto;
+  border: 1px solid #62527c;
+  border-radius: 8px;
+  background: #202029;
+  box-shadow: 0 12px 35px #0006;
+  padding: 5px;
+}
+.description-suggestions-heading {
+  padding: 9px 10px;
+  font-size: 10px;
+  color: #9994ad;
+}
+.description-suggestions [role="option"] {
+  padding: 11px;
+  border-radius: 5px;
+  cursor: pointer;
+  overflow-wrap: anywhere;
+}
+.description-suggestions [data-active="true"] {
+  background: #b4a1fc26;
+}
+.description-suggestions strong {
+  display: block;
+  font-size: 12px;
+  font-weight: 500;
+  color: #e0d6f7;
+}
+.description-suggestions small {
+  display: block;
+  margin-top: 6px;
+  font-size: 10px;
+  color: #a49cb8;
+}
+.entry-card:has(.description-search) {
+  overflow: visible;
+}

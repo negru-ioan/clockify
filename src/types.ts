@@ -14,6 +14,8 @@ export type Entry = {
   tag: string;
   date: string;
   hours: number;
+  startTime?: string;
+  endTime?: string;
 };
 export type Data = { clients: string[]; projects: Project[]; entries: Entry[] };
 export type View = "tracker" | "reports" | "settings" | "calendar";
@@ -26,4 +28,6 @@ export type ActivityValues = {
   tag: string;
   date: string;
   hours: string;
+  startTime: string;
+  endTime: string;
 };

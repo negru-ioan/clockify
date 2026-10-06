@@ -27,9 +27,9 @@ Open http://127.0.0.1:9999. Run `npm test` for API/export checks.
 - Add an activity with a description, client, project, one project-specific tag, date and decimal hours. Defaults: REVO, OVERX Vendite, Ioan Negru. Hours accept a comma or a dot.
 - Edit or delete activities from the history. Search and review totals under Report.
 - Add clients, projects and tags in Directories. Choices are seeded from the supplied workbook, including INTERNO / ALTRO.
-- Export a date range with the agreed opening password. The exported file uses the supplied three-sheet template, replaces its example with your entries, and refreshes mapping sheets with all current choices. Dates and hours are numeric cells; Excel's locale controls decimal separators.
+- Export a date range with the agreed opening password, or uncheck password protection for an unencrypted export. Matching tasks on the same date are grouped by description (ignoring case and outer whitespace), client, project, tag and user; their hours are summed. The exported file uses the supplied three-sheet template, replaces its example with your entries, and refreshes mapping sheets with all current choices. Dates and hours are numeric cells; Excel's locale controls decimal separators.
 - File naming: `Timesheet v1.0 - IN - DD-MM-YYYY.xlsx`, using the selected range's end date.
-- Exports are encrypted with an Excel opening password. The password is not persisted. Send the file yourself by Friday 17:00 and agree on the password separately.
+- Exports are encrypted with an Excel opening password by default. The password is not persisted. Send the file yourself by Friday 17:00 and agree on the password separately.
 
 ## Local data and backup
 
@@ -71,3 +71,7 @@ Development also uses port 9999 for Vite, with its API on port 3001. Stop the pr
 ## LAN access
 
 The website listens on all network interfaces (`0.0.0.0`) by default. After `npm run start-pm2`, open `http://192.168.1.82:9999` from another device on your LAN (use your computer’s current LAN IP). Same-origin API requests are accepted from that address. Set `HOST=127.0.0.1` for loopback-only use. The app has no authentication, so devices that can reach its port can view and modify timesheet data.
+
+## Duration entry
+
+Hours spent accepts decimal hours (`2,5` or `2.5`) or hours/minutes (`2:30`). Minutes must be 00–59. Optional start/end times calculate duration when hours are empty, and keep updating it until you manually override hours. An earlier end time means the next day; equal times are invalid. The optional times are stored locally but are not added to the required Excel template. Exports continue to store numeric decimal hours.

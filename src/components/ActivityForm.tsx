@@ -1,7 +1,9 @@
+import { parseDuration } from "../lib/duration";
 import { Plus, ShieldCheck } from "lucide-react";
 import type { Data } from "../types";
 import type { ActivityForm as FormState } from "../hooks/useActivityForm";
 import "./ActivityForm.css";
+import { DescriptionSearch } from "./DescriptionSearch";
 import { SelectSearch } from "./SelectSearch";
 
 export function ActivityForm({
@@ -11,7 +13,7 @@ export function ActivityForm({
   data: Data;
   state: FormState;
 }) {
-  const { form, defaults, project: p, saving } = state;
+  const { form, defaults, project: p, saving, changeTime, changeHours } = state;
   const fieldError = (name: keyof typeof defaults) =>
     form.touched[name] && form.errors[name] ? (
       <small className="error">{form.errors[name]}</small>
@@ -28,51 +30,20 @@ export function ActivityForm({
         <span className="pill">Manual entry</span>
       </div>
       <form onSubmit={form.handleSubmit}>
-        <label className="description">
-          Activity description
-          <input
-            name="description"
-            placeholder="What did you work on? E.g. OM-9235 - OCM 2222: Light endorsements"
-            value={form.values.description}
-            onChange={form.handleChange}
-            onBlur={form.handleBlur}
-          />
-          {fieldError("description")}
-        </label>
+        <DescriptionSearch
+          value={form.values.description}
+          entries={data.entries}
+          excludeId={form.values.id}
+          onChange={(description) => {
+            void form.setFieldValue("description", description);
+          }}
+          onSelect={state.reuseTask}
+          onBlur={() => {
+            void form.setFieldTouched("description", true);
+          }}
+          error={form.touched.description ? form.errors.description : undefined}
+        />
         <div className="form-grid">
-          <SelectSearch
-            label="Client"
-            name="client"
-            value={form.values.client}
-            options={data.clients.map((c) => ({ value: c, label: c }))}
-            onChange={(client) => {
-              void form.setValues({
-                ...form.values,
-                client,
-                project: "",
-                tag: "",
-              });
-            }}
-          />
-          <SelectSearch
-            label="Project"
-            name="project"
-            value={form.values.project}
-            placeholder="Select a project"
-            options={data.projects
-              .filter((project) => project.client === form.values.client)
-              .map((project) => ({
-                value: String(project.id),
-                label: project.name,
-              }))}
-            onChange={(project) => {
-              void form.setValues({ ...form.values, project, tag: "" });
-            }}
-            onBlur={() => {
-              void form.setFieldTouched("project", true);
-            }}
-            error={form.touched.project ? form.errors.project : undefined}
-          />
           <SelectSearch
             label="Tag"
             name="tag"
@@ -102,14 +73,78 @@ export function ActivityForm({
             Hours spent
             <input
               name="hours"
-              inputMode="decimal"
-              placeholder="E.g. 2.5"
+              inputMode="text"
+              placeholder="E.g. 2:30 or 2,5"
               value={form.values.hours}
-              onChange={form.handleChange}
+              onChange={(event) => changeHours(event.target.value)}
               onBlur={form.handleBlur}
             />
             {fieldError("hours")}
+            <small className="duration-help">
+              {Number.isFinite(parseDuration(form.values.hours))
+                ? `${parseDuration(form.values.hours).toLocaleString("it-IT", { maximumFractionDigits: 4 })} decimal hours`
+                : "2:30 = 2,5 hours"}
+            </small>
           </label>
+          <label>
+            Start time (optional)
+            <input
+              type="time"
+              name="startTime"
+              value={form.values.startTime}
+              onChange={(event) => changeTime("startTime", event.target.value)}
+              onBlur={form.handleBlur}
+            />
+          </label>
+          <label>
+            End time (optional)
+            <input
+              type="time"
+              name="endTime"
+              value={form.values.endTime}
+              onChange={(event) => changeTime("endTime", event.target.value)}
+              onBlur={form.handleBlur}
+            />
+            {fieldError("endTime")}
+            <small className="duration-help">
+              An earlier end time means the next day.
+            </small>
+          </label>
+
+          <SelectSearch
+            label="Project"
+            name="project"
+            value={form.values.project}
+            placeholder="Select a project"
+            options={data.projects
+              .filter((project) => project.client === form.values.client)
+              .map((project) => ({
+                value: String(project.id),
+                label: project.name,
+              }))}
+            onChange={(project) => {
+              void form.setValues({ ...form.values, project, tag: "" });
+            }}
+            onBlur={() => {
+              void form.setFieldTouched("project", true);
+            }}
+            error={form.touched.project ? form.errors.project : undefined}
+          />
+          <SelectSearch
+            label="Client"
+            name="client"
+            value={form.values.client}
+            options={data.clients.map((c) => ({ value: c, label: c }))}
+            onChange={(client) => {
+              void form.setValues({
+                ...form.values,
+                client,
+                project: "",
+                tag: "",
+              });
+            }}
+          />
+
           <label>
             User
             <input

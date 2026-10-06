@@ -20,7 +20,7 @@ test("entry CRUD, associations, period filtering and encrypted template export",
 		const p = data.projects.find((p) => p.name === "OVERX Vendite");
 		assert.equal(p.client, "REVO");
 		assert.ok(p.tags.includes("Basket"));
-		const entry = { description: "OM-9235 - OCM 2222: Appendici Light", user: "Ioan Negru", project: p.id, tag: "Basket", date: "2026-10-05", hours: 2.5 };
+		const entry = { description: "OM-9235 - OCM 2222: Appendici Light", user: "Ioan Negru", project: p.id, tag: "Basket", date: "2026-10-05", hours: 2.5, startTime: "09:00", endTime: "11:30" };
 		assert.equal((await request("entries", { ...entry, tag: "invalid" })).status, 400);
 		assert.equal((await request("entries", { ...entry, hours: 25 })).status, 400);
 		assert.equal((await request("entries", { ...entry, date: "2026-02-30" })).status, 400);
@@ -28,6 +28,7 @@ test("entry CRUD, associations, period filtering and encrypted template export",
 		let entries = (await (await fetch(base + "data")).json()).entries;
 		assert.equal(entries[0].hours, 2.5);
 		const id = entries[0].id;
+ assert.equal(entries[0].startTime, "09:00"); assert.equal(entries[0].endTime, "11:30");
 		assert.equal((await request("entries", { ...entry, id, hours: 3.25 })).status, 200);
 		assert.equal((await request("choices", { type: "tag", name: "New task", project: p.id })).status, 200);
 		const range = { from: "2026-10-01", to: "2026-10-09", password: "test-password" };
@@ -45,6 +46,23 @@ test("entry CRUD, associations, period filtering and encrypted template export",
 		assert.equal(typeof sheet.cell("F2").value(), "number");
 		assert.equal(sheet.cell("A4").value(), undefined);
 		assert.equal(wb.sheets().length, 3);
+        // Same-day duplicates combine, but other tags and dates remain separate.
+        await request("entries", {...entry,hours:1.5});
+        await request("entries", {...entry,date:"2026-10-06",hours:2});
+        await request("entries", {...entry,tag:"000-DB",hours:1});
+        const plainResponse = await request("export", {...range,protect:false,password:""});
+        assert.equal(plainResponse.status,200);
+        const plain = await XlsxPopulate.fromDataAsync(Buffer.from(await plainResponse.arrayBuffer()));
+        const exported = plain.sheet("Report").range("A2:G4").value();
+        assert.equal(exported.length,3);
+        assert.equal(exported[0][6],4.75);
+        assert.notEqual(exported[0][5],exported[2][5]);
+        assert.equal(exported[1][4],"000-DB");
+        assert.equal(exported.reduce((sum,row)=>sum+row[6],0),7.75);
+        assert.equal((await (await fetch(base+"data")).json()).entries.length,4);
+        for(const saved of (await (await fetch(base+"data")).json()).entries) {
+          if(saved.id!==id) await request("entries/"+saved.id,undefined,"DELETE");
+        }
 		assert.equal((await request("entries/" + id, undefined, "DELETE")).status, 200);
 		assert.equal((await (await fetch(base + "data")).json()).entries.length, 0);
 	} finally {

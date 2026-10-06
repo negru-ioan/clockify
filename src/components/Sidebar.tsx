@@ -3,7 +3,6 @@ import {
   CalendarDays,
   BarChart3,
   FolderKanban,
-  ChevronRight,
   HardDrive,
 } from "lucide-react";
 import type { View } from "../types";
@@ -18,12 +17,8 @@ export function Sidebar({
   return (
     <aside>
       <div className="brand">
-        <span className="brand-icon">
-          <Clock3 size={24} />
-        </span>
-        clockify<span className="local">LOCAL</span>
+        <img src="/logo.svg" alt="Clockify Logo" />
       </div>
-      <div className="nav-label">WORKSPACE</div>
       <nav>
         <button
           className={view === "tracker" ? "active" : ""}

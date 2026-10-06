@@ -18,11 +18,7 @@ aside {
   font-weight: 700;
   letter-spacing: -1px;
   padding: 0 9px;
-}
-
-.brand-icon {
-  color: #aea5ff;
-  display: flex;
+  margin-bottom: 30px;
 }
 
 .local {
