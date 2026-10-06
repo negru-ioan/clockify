@@ -1,9 +1,14 @@
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useState } from "react";
 import { useFormik } from "formik";
 import type { ActivityValues, Data, Entry } from "../types";
 import { today } from "../lib/dates";
 import { api } from "../lib/api";
-import { parseDuration, elapsedMinutes, durationText } from "../lib/duration";
+import {
+  parseDuration,
+  elapsedMinutes,
+  durationText,
+  normalizeTime,
+} from "../lib/duration";
 import { applyTaskSuggestion } from "../lib/taskSuggestions";
 export function useActivityForm(
   data: Data,
@@ -11,11 +16,10 @@ export function useActivityForm(
   notify: (message: string) => void,
 ) {
   const [saving, setSaving] = useState(false);
-  const automatic = useRef(true);
   const defaults: ActivityValues = {
     id: 0,
     description: "",
-    user: "Ioan Negru",
+    user: data.userName || "Ioan Negru",
     client: "REVO",
     project: "",
     tag: "",
@@ -30,10 +34,14 @@ export function useActivityForm(
       const e: Record<string, string> = {};
       if (!v.description.trim())
         e.description = "Enter an activity description.";
-      if (!v.user.trim()) e.user = "Enter your first and last name.";
+
       if (!v.project) e.project = "Choose a project.";
       if (!v.tag) e.tag = "Choose a tag.";
       if (!v.date) e.date = "Choose a date.";
+      for (const field of ["startTime", "endTime"] as const) {
+        if (v[field] && !normalizeTime(v[field]))
+          e[field] = "Enter an hour (19) or HH:MM (19:30).";
+      }
       const h = parseDuration(v.hours);
       if (!Number.isFinite(h) || h <= 0 || h > 24)
         e.hours =
@@ -52,6 +60,8 @@ export function useActivityForm(
         await api("entries", {
           ...v,
           hours: parseDuration(v.hours),
+          startTime: normalizeTime(v.startTime) || "",
+          endTime: normalizeTime(v.endTime) || "",
         });
         await onSaved();
         form.resetForm({
@@ -64,7 +74,7 @@ export function useActivityForm(
             endTime: "",
           },
         });
-        automatic.current = true;
+
         notify(v.id ? "Activity updated." : "Activity saved.");
       } catch (e) {
         notify((e as Error).message);
@@ -87,7 +97,6 @@ export function useActivityForm(
   }, [data.projects]);
   const p = data.projects.find((p) => p.id === Number(form.values.project));
   const edit = (entry: Entry) => {
-    automatic.current = false;
     void form.setValues({
       ...entry,
       startTime: entry.startTime || "",
@@ -97,16 +106,12 @@ export function useActivityForm(
     });
   };
   const changeHours = (hours: string) => {
-    automatic.current = !hours.trim();
     void form.setFieldValue("hours", hours);
   };
   const changeTime = (field: "startTime" | "endTime", value: string) => {
     const values = { ...form.values, [field]: value };
-    if (automatic.current || !values.hours.trim()) {
-      const minutes = elapsedMinutes(values.startTime, values.endTime);
-      values.hours = minutes === null ? "" : durationText(minutes);
-      automatic.current = true;
-    }
+    const minutes = elapsedMinutes(values.startTime, values.endTime);
+    if (minutes !== null) values.hours = durationText(minutes);
     void form.setValues(values);
   };
   const reuseTask = (entry: Entry) => {

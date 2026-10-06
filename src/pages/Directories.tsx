@@ -1,3 +1,4 @@
+import { ProfileSettings } from "../components/ProfileSettings";
 import { useState } from "react";
 import { Plus, FolderKanban } from "lucide-react";
 import type { Data } from "../types";
@@ -21,6 +22,12 @@ export function Directories({
   });
   return (
     <>
+      <ProfileSettings
+        key={data.userName}
+        name={data.userName || "Ioan Negru"}
+        onSaved={onSaved}
+        notify={notify}
+      />
       <section className="entry-card">
         <div className="section-heading">
           <h2>Add a choice</h2>

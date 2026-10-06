@@ -17,7 +17,12 @@ export type Entry = {
   startTime?: string;
   endTime?: string;
 };
-export type Data = { clients: string[]; projects: Project[]; entries: Entry[] };
+export type Data = {
+  userName?: string;
+  clients: string[];
+  projects: Project[];
+  entries: Entry[];
+};
 export type View = "tracker" | "reports" | "settings" | "calendar";
 export type ActivityValues = {
   id: number;

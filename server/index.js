@@ -26,6 +26,9 @@ if (!db.prepare("SELECT COUNT(*) n FROM clients").get().n) {
 		for (const t of p.tags) db.prepare("INSERT INTO tags VALUES(?,?)").run(id, t);
 	}
 }
+db.exec("CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT NOT NULL)");
+db.prepare("INSERT OR IGNORE INTO settings VALUES('userName',?)").run(db.prepare("SELECT user FROM entries WHERE user IS NOT NULL AND user != '' ORDER BY id DESC LIMIT 1").get()?.user || "Ioan Negru");
+const userName = () => db.prepare("SELECT value FROM settings WHERE key='userName'").get().value;
 export const app = express();
 app.use(express.json());
 app.use((req, res, next) => {
@@ -34,9 +37,16 @@ app.use((req, res, next) => {
 		return res.status(403).json({ error: "Origin not allowed" });
 	next();
 });
-const entries = () => db.prepare("SELECT e.*,p.name projectName,p.exportName,p.client FROM entries e JOIN projects p ON p.id=e.project ORDER BY date DESC,id DESC").all();
+const entries = () => db.prepare("SELECT e.*,p.name projectName,p.exportName,p.client FROM entries e JOIN projects p ON p.id=e.project ORDER BY date DESC,id DESC").all().map(entry => ({...entry,user:userName()}));
+app.post("/api/profile", (req,res) => {
+ const name = req.body.userName;
+ if(typeof name !== "string" || !name.trim() || name.length > 160) return res.status(400).json({error:"Enter your first and last name."});
+ db.prepare("UPDATE settings SET value=? WHERE key='userName'").run(name.trim());
+ res.json({ok:true});
+});
 app.get("/api/data", (_, res) =>
 	res.json({
+		userName: userName(),
 		clients: db
 			.prepare("SELECT name FROM clients ORDER BY name")
 			.all()
@@ -72,9 +82,7 @@ function validate(v) {
 		typeof v.description === "string" &&
 		v.description.trim().length > 0 &&
 		v.description.length <= 2000 &&
-		typeof v.user === "string" &&
-		v.user.trim() &&
-		/^\d{4}-\d{2}-\d{2}$/.test(v.date) &&
+				/^\d{4}-\d{2}-\d{2}$/.test(v.date) &&
 		!isNaN(Date.parse(v.date)) &&
 		new Date(v.date).toISOString().slice(0, 10) === v.date &&
 		Number.isFinite(Number(v.hours)) &&
@@ -90,12 +98,12 @@ app.post("/api/entries", (req, res) => {
 	if (v.id) {
 		const r = db
 			.prepare("UPDATE entries SET description=?,user=?,project=?,tag=?,date=?,hours=?,startTime=?,endTime=? WHERE id=?")
-			.run(v.description.trim(), v.user.trim(), Number(v.project), v.tag, v.date, Number(v.hours), v.startTime || "", v.endTime || "", v.id);
+			.run(v.description.trim(), null, Number(v.project), v.tag, v.date, Number(v.hours), v.startTime || "", v.endTime || "", v.id);
 		if (!r.changes) return res.status(404).json({ error: "Activity not found." });
 	} else
 		db.prepare("INSERT INTO entries(description,user,project,tag,date,hours,startTime,endTime) VALUES(?,?,?,?,?,?,?,?)").run(
 			v.description.trim(),
-			v.user.trim(),
+			null,
 			Number(v.project),
 			v.tag,
 			v.date,
@@ -153,7 +161,7 @@ app.post("/api/export", async (req, res, next) => {
 			});
 		const buffer = await wb.outputAsync(protect ? { password } : {});
 		res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-		res.setHeader("Content-Disposition", `attachment; filename="Timesheet v1.0 - IN - ${to.split("-").reverse().join("-")}.xlsx"`);
+		res.setHeader("Content-Disposition", `attachment; filename="Timesheet v1.0 - ${userName().split(/\s+/).map(part=>part[0]).join("").replace(/[^a-zA-Z]/g,"").toUpperCase() || "IN"} - ${to.split("-").reverse().join("-")}.xlsx"`);
 		res.send(buffer);
 	} catch (e) {
 		next(e);

@@ -29,7 +29,10 @@ export function ExportDialog({
       const url = URL.createObjectURL(blob);
       const a = document.createElement("a");
       a.href = url;
-      a.download = `Timesheet v1.0 - IN - ${range.to.split("-").reverse().join("-")}.xlsx`;
+      a.download =
+        /filename="([^"]+)"/.exec(
+          r.headers.get("Content-Disposition") || "",
+        )?.[1] || "Timesheet.xlsx";
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
       onClose();

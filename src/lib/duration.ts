@@ -7,14 +7,20 @@ export function parseDuration(value: string): number {
   }
   return /^\d+(?:[.,]\d+)?$/.test(text) ? Number(text.replace(",", ".")) : NaN;
 }
+export function normalizeTime(value: string): string | null {
+  const match = /^(\d{1,2})(?::([0-5]\d))?$/.exec(value.trim());
+  if (!match || Number(match[1]) > 23) return null;
+  return `${match[1].padStart(2, "0")}:${match[2] || "00"}`;
+}
 export function elapsedMinutes(start: string, end: string): number | null {
-  if (![start, end].every((time) => /^(?:[01]\d|2[0-3]):[0-5]\d$/.test(time)))
-    return null;
+  const normalizedStart = normalizeTime(start),
+    normalizedEnd = normalizeTime(end);
+  if (!normalizedStart || !normalizedEnd) return null;
   const minutes = (time: string) => {
     const [h, m] = time.split(":").map(Number);
     return h * 60 + m;
   };
-  const difference = minutes(end) - minutes(start);
+  const difference = minutes(normalizedEnd) - minutes(normalizedStart);
   return difference < 0 ? difference + 1440 : difference;
 }
 export function durationText(minutes: number): string {

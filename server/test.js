@@ -20,6 +20,10 @@ test("entry CRUD, associations, period filtering and encrypted template export",
 		const p = data.projects.find((p) => p.name === "OVERX Vendite");
 		assert.equal(p.client, "REVO");
 		assert.ok(p.tags.includes("Basket"));
+ assert.equal((await request("profile", {userName:"Test Person"})).status,200);
+ assert.equal((await (await fetch(base+"data")).json()).userName,"Test Person");
+ assert.equal((await request("profile", {userName:""})).status,400);
+ await request("profile", {userName:"Ioan Negru"});
 		const entry = { description: "OM-9235 - OCM 2222: Appendici Light", user: "Ioan Negru", project: p.id, tag: "Basket", date: "2026-10-05", hours: 2.5, startTime: "09:00", endTime: "11:30" };
 		assert.equal((await request("entries", { ...entry, tag: "invalid" })).status, 400);
 		assert.equal((await request("entries", { ...entry, hours: 25 })).status, 400);

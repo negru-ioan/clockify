@@ -24,7 +24,7 @@ Open http://127.0.0.1:9999. Run `npm test` for API/export checks.
 
 ## Workflow
 
-- Add an activity with a description, client, project, one project-specific tag, date and decimal hours. Defaults: REVO, OVERX Vendite, Ioan Negru. Hours accept a comma or a dot.
+- Add an activity with a description, client, project, one project-specific tag, date and decimal hours. Defaults: REVO and OVERX Vendite. Your name is saved once in Directories → Your profile and used for exports. Hours accept a comma or a dot.
 - Edit or delete activities from the history. Search and review totals under Report.
 - Add clients, projects and tags in Directories. Choices are seeded from the supplied workbook, including INTERNO / ALTRO.
 - Export a date range with the agreed opening password, or uncheck password protection for an unencrypted export. Matching tasks on the same date are grouped by description (ignoring case and outer whitespace), client, project, tag and user; their hours are summed. The exported file uses the supplied three-sheet template, replaces its example with your entries, and refreshes mapping sheets with all current choices. Dates and hours are numeric cells; Excel's locale controls decimal separators.
@@ -74,4 +74,6 @@ The website listens on all network interfaces (`0.0.0.0`) by default. After `npm
 
 ## Duration entry
 
-Hours spent accepts decimal hours (`2,5` or `2.5`) or hours/minutes (`2:30`). Minutes must be 00–59. Optional start/end times calculate duration when hours are empty, and keep updating it until you manually override hours. An earlier end time means the next day; equal times are invalid. The optional times are stored locally but are not added to the required Excel template. Exports continue to store numeric decimal hours.
+Hours spent accepts decimal hours (`2,5` or `2.5`) or hours/minutes (`2:30`). Minutes must be 00–59. Valid start/end times always recalculate duration when edited. Whole hours such as `19` normalize to `19:00`. An earlier end time means the next day; equal times are invalid. The optional times are stored locally but are not added to the required Excel template. Exports continue to store numeric decimal hours.
+
+Profile names are stored once in SQLite settings. New activities do not duplicate the name; exported rows use the current profile name, and filenames use its initials. Existing activity records remain intact.

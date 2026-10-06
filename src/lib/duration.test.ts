@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { parseDuration, elapsedMinutes, durationText } from './duration.ts';
+import { parseDuration, elapsedMinutes, durationText, normalizeTime } from './duration.ts';
 
 test('duration input accepts decimal hours and strict hours/minutes', () => {
   assert.equal(parseDuration('2:30'), 2.5);
@@ -20,3 +20,5 @@ test('time ranges calculate minutes, including overnight', () => {
   assert.equal(elapsedMinutes('25:00','12:00'),null);
   assert.equal(durationText(150),'2:30');
 });
+
+test("whole hours normalize and calculate",()=>{ assert.equal(normalizeTime("19"),"19:00"); assert.equal(normalizeTime("9"),"09:00"); assert.equal(normalizeTime("24"),null); assert.equal(elapsedMinutes("9","11:30"),150); });

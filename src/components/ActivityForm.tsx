@@ -1,4 +1,4 @@
-import { parseDuration } from "../lib/duration";
+import { parseDuration, normalizeTime } from "../lib/duration";
 import { Plus, ShieldCheck } from "lucide-react";
 import type { Data } from "../types";
 import type { ActivityForm as FormState } from "../hooks/useActivityForm";
@@ -44,21 +44,6 @@ export function ActivityForm({
           error={form.touched.description ? form.errors.description : undefined}
         />
         <div className="form-grid">
-          <SelectSearch
-            label="Tag"
-            name="tag"
-            value={form.values.tag}
-            placeholder="Select a tag"
-            options={(p?.tags || []).map((tag) => ({ value: tag, label: tag }))}
-            onChange={(tag) => {
-              void form.setFieldValue("tag", tag);
-            }}
-            onBlur={() => {
-              void form.setFieldTouched("tag", true);
-            }}
-            error={form.touched.tag ? form.errors.tag : undefined}
-          />
-
           <label>
             Date
             <input
@@ -68,6 +53,43 @@ export function ActivityForm({
               onChange={form.handleChange}
             />
             {fieldError("date")}
+          </label>
+          <label>
+            Start time (optional)
+            <input
+              type="text"
+              inputMode="text"
+              placeholder="19 or 19:30"
+              name="startTime"
+              value={form.values.startTime}
+              onChange={(event) => changeTime("startTime", event.target.value)}
+              onBlur={(event) => {
+                const time = normalizeTime(form.values.startTime);
+                if (time) changeTime("startTime", time);
+                form.handleBlur(event);
+              }}
+            />
+            {fieldError("startTime")}
+          </label>
+          <label>
+            End time (optional)
+            <input
+              type="text"
+              inputMode="text"
+              placeholder="19 or 19:30"
+              name="endTime"
+              value={form.values.endTime}
+              onChange={(event) => changeTime("endTime", event.target.value)}
+              onBlur={(event) => {
+                const time = normalizeTime(form.values.endTime);
+                if (time) changeTime("endTime", time);
+                form.handleBlur(event);
+              }}
+            />
+            {fieldError("endTime")}
+            <small className="duration-help">
+              An earlier end time means the next day.
+            </small>
           </label>
           <label>
             Hours spent
@@ -86,30 +108,23 @@ export function ActivityForm({
                 : "2:30 = 2,5 hours"}
             </small>
           </label>
-          <label>
-            Start time (optional)
-            <input
-              type="time"
-              name="startTime"
-              value={form.values.startTime}
-              onChange={(event) => changeTime("startTime", event.target.value)}
-              onBlur={form.handleBlur}
-            />
-          </label>
-          <label>
-            End time (optional)
-            <input
-              type="time"
-              name="endTime"
-              value={form.values.endTime}
-              onChange={(event) => changeTime("endTime", event.target.value)}
-              onBlur={form.handleBlur}
-            />
-            {fieldError("endTime")}
-            <small className="duration-help">
-              An earlier end time means the next day.
-            </small>
-          </label>
+        </div>
+
+        <div className="form-grid form-grid-three">
+          <SelectSearch
+            label="Tag"
+            name="tag"
+            value={form.values.tag}
+            placeholder="Select a tag"
+            options={(p?.tags || []).map((tag) => ({ value: tag, label: tag }))}
+            onChange={(tag) => {
+              void form.setFieldValue("tag", tag);
+            }}
+            onBlur={() => {
+              void form.setFieldTouched("tag", true);
+            }}
+            error={form.touched.tag ? form.errors.tag : undefined}
+          />
 
           <SelectSearch
             label="Project"
@@ -130,6 +145,7 @@ export function ActivityForm({
             }}
             error={form.touched.project ? form.errors.project : undefined}
           />
+
           <SelectSearch
             label="Client"
             name="client"
@@ -144,17 +160,6 @@ export function ActivityForm({
               });
             }}
           />
-
-          <label>
-            User
-            <input
-              name="user"
-              value={form.values.user}
-              onChange={form.handleChange}
-              onBlur={form.handleBlur}
-            />
-            {fieldError("user")}
-          </label>
         </div>
         <div className="form-footer">
           <p>

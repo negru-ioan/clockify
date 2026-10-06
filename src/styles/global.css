@@ -152,9 +152,13 @@ h2 {
 
 .form-grid {
   display: grid;
-  grid-template-columns: repeat(3, 1fr);
+  grid-template-columns: repeat(4, 1fr);
   gap: 18px;
   margin: 21px 0 25px;
+}
+
+.form-grid-three {
+  grid-template-columns: repeat(3, 1fr);
 }
 
 .form-footer {
