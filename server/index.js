@@ -131,34 +131,21 @@ app.post("/api/export", async (req, res, next) => {
 		if (!rows.length) return res.status(400).json({ error: "No activities in the selected period." });
 		const wb = await XlsxPopulate.fromFileAsync(path.join(root, "template.xlsx"));
 		const sheet = wb.sheet("Report");
-		sheet.range("A2:G4").clear();
+		if (!sheet) return res.status(400).json({ error: 'The template must contain a "Report" sheet.' });
+        // Keep the template header; discard old examples and their inherited styles.
+        const lastRow = Math.max(sheet.usedRange()?.endCell().rowNumber() || 1, rows.length + 1);
+        sheet.range(`A2:G${lastRow}`).clear();
+        sheet.range(`A2:G${rows.length + 1}`).style({fontFamily:"Calibri",fontSize:11,bold:false,italic:false,fontColor:"000000",verticalAlignment:"center",wrapText:true});
 		rows.forEach((e, i) => {
 			const date = new Date(e.date + "T00:00:00Z");
 			sheet.cell(i + 2, 1).value([[e.exportName, e.client, e.description, e.user, e.tag, (date.getTime() - Date.UTC(1899, 11, 30)) / 86400000, e.hours]]);
 			sheet.cell(i + 2, 6).style("numberFormat", "dd/mm/yyyy");
 			sheet.cell(i + 2, 7).style("numberFormat", "0.00");
 		});
-		const clients = db.prepare("SELECT name FROM clients ORDER BY name").all();
-		const map = wb.sheet("Mappa Cliente-Progetto");
-		map.usedRange().clear();
-		map.cell("A1").value("Clienti");
-		map.cell("A2").value("Progetti");
-		clients.forEach((c, i) => {
-			map.cell(1, i + 2).value(c.name);
-			db.prepare("SELECT exportName FROM projects WHERE client=?")
-				.all(c.name)
-				.forEach((p, j) => map.cell(j + 2, i + 2).value(p.exportName));
-		});
-		const tags = wb.sheet("Mappa Progetto-Tags");
-		tags.usedRange().clear();
-		db.prepare("SELECT * FROM projects")
-			.all()
-			.forEach((p, i) => {
-				tags.cell(1, i + 1).value(p.name);
-				db.prepare("SELECT name FROM tags WHERE project=? ORDER BY name")
-					.all(p.id)
-					.forEach((t, j) => tags.cell(j + 2, i + 1).value(t.name));
-			});
+        // Exports contain only the report, even if an older template has mapping sheets.
+        for (const name of ["Mappa Cliente-Progetto", "Mappa Progetto-Tags"]) {
+            if (wb.sheet(name)) wb.deleteSheet(name);
+        }
 		const buffer = await wb.outputAsync(protect ? { password } : {});
 		res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 		res.setHeader("Content-Disposition", `attachment; filename="Timesheet v1.0 - ${userName().split(/\s+/).map(part=>part[0]).join("").replace(/[^a-zA-Z]/g,"").toUpperCase() || "IN"} - ${to.split("-").reverse().join("-")}.xlsx"`);

@@ -49,7 +49,7 @@ test("entry CRUD, associations, period filtering and encrypted template export",
 		assert.equal(sheet.cell("G2").value(), 3.25);
 		assert.equal(typeof sheet.cell("F2").value(), "number");
 		assert.equal(sheet.cell("A4").value(), undefined);
-		assert.equal(wb.sheets().length, 3);
+		assert.equal(wb.sheets().length, 1);
         // Same-day duplicates combine, but other tags and dates remain separate.
         await request("entries", {...entry,hours:1.5});
         await request("entries", {...entry,date:"2026-10-06",hours:2});
@@ -64,6 +64,18 @@ test("entry CRUD, associations, period filtering and encrypted template export",
         assert.equal(exported[1][4],"000-DB");
         assert.equal(exported.reduce((sum,row)=>sum+row[6],0),7.75);
         assert.equal((await (await fetch(base+"data")).json()).entries.length,4);
+        await request("entries", {...entry,description:"Additional task 1",hours:1});
+        await request("entries", {...entry,description:"Additional task 2",hours:1});
+        const styleResponse = await request("export", {...range,protect:false});
+        assert.equal(styleResponse.status,200);
+        const styled = await XlsxPopulate.fromDataAsync(Buffer.from(await styleResponse.arrayBuffer()));
+        assert.deepEqual(styled.sheets().map(sheet=>sheet.name()),["Report"]);
+        for(let row=2;row<=6;row++) {
+          for(let column=1;column<=7;column++) {
+            assert.equal(styled.sheet("Report").cell(row,column).style("fontSize"),11);
+            assert.equal(styled.sheet("Report").cell(row,column).style("fontFamily"),"Calibri");
+          }
+        }
         for(const saved of (await (await fetch(base+"data")).json()).entries) {
           if(saved.id!==id) await request("entries/"+saved.id,undefined,"DELETE");
         }

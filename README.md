@@ -27,7 +27,7 @@ Open http://127.0.0.1:9999. Run `npm test` for API/export checks.
 - Add an activity with a description, client, project, one project-specific tag, date and decimal hours. Defaults: REVO and OVERX Vendite. Your name is saved once in Directories → Your profile and used for exports. Hours accept a comma or a dot.
 - Edit or delete activities from the history. Search and review totals under Report.
 - Add clients, projects and tags in Directories. Choices are seeded from the supplied workbook, including INTERNO / ALTRO.
-- Export a date range with the agreed opening password, or uncheck password protection for an unencrypted export. Matching tasks on the same date are grouped by description (ignoring case and outer whitespace), client, project, tag and user; their hours are summed. The exported file uses the supplied three-sheet template, replaces its example with your entries, and refreshes mapping sheets with all current choices. Dates and hours are numeric cells; Excel's locale controls decimal separators.
+- Export a date range with the agreed opening password, or uncheck password protection for an unencrypted export. Matching tasks on the same date are grouped by description (ignoring case and outer whitespace), client, project, tag and user; their hours are summed. The exported file uses the supplied Report template, replaces its example with your entries, and exports only the Report sheet with consistent 11-point Calibri formatting. Dates and hours are numeric cells; Excel's locale controls decimal separators.
 - File naming: `Timesheet v1.0 - IN - DD-MM-YYYY.xlsx`, using the selected range's end date.
 - Exports are encrypted with an Excel opening password by default. The password is not persisted. Send the file yourself by Friday 17:00 and agree on the password separately.
 
@@ -67,10 +67,6 @@ npx pm2 status
 For restoring managed processes after restarting PM2, run `npx pm2 save`. To enable launch at system startup, run `npx pm2 startup` and follow its platform-specific instructions, then `npx pm2 save`.
 
 Development also uses port 9999 for Vite, with its API on port 3001. Stop the production PM2 app before starting development since they share website port 9999. Standalone `npm start` defaults to 9999; set `PORT` to override it.
-
-## LAN access
-
-The website listens on all network interfaces (`0.0.0.0`) by default. After `npm run start-pm2`, open `http://192.168.1.82:9999` from another device on your LAN (use your computer’s current LAN IP). Same-origin API requests are accepted from that address. Set `HOST=127.0.0.1` for loopback-only use. The app has no authentication, so devices that can reach its port can view and modify timesheet data.
 
 ## Duration entry
 
