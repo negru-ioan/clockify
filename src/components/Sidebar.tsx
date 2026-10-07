@@ -19,7 +19,9 @@ export function Sidebar({
   return (
     <aside>
       <div className="brand">
-        <img src="/logo.svg" alt="Clockify Logo" />
+        <a href="/">
+          <img src="/logo.svg" alt="Clockify Logo" />
+        </a>
       </div>
       <nav>
         <button
