@@ -27,7 +27,9 @@ if (!db.prepare("SELECT COUNT(*) n FROM clients").get().n) {
 	}
 }
 db.exec("CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT NOT NULL)");
-db.prepare("INSERT OR IGNORE INTO settings VALUES('userName',?)").run(db.prepare("SELECT user FROM entries WHERE user IS NOT NULL AND user != '' ORDER BY id DESC LIMIT 1").get()?.user || "Ioan Negru");
+db.prepare("INSERT OR IGNORE INTO settings VALUES('userName',?)").run(
+	db.prepare("SELECT user FROM entries WHERE user IS NOT NULL AND user != '' ORDER BY id DESC LIMIT 1").get()?.user || "Ioan Negru",
+);
 const userName = () => db.prepare("SELECT value FROM settings WHERE key='userName'").get().value;
 export const app = express();
 app.use(express.json());
@@ -37,12 +39,16 @@ app.use((req, res, next) => {
 		return res.status(403).json({ error: "Origin not allowed" });
 	next();
 });
-const entries = () => db.prepare("SELECT e.*,p.name projectName,p.exportName,p.client FROM entries e JOIN projects p ON p.id=e.project ORDER BY date DESC,id DESC").all().map(entry => ({...entry,user:userName()}));
-app.post("/api/profile", (req,res) => {
- const name = req.body.userName;
- if(typeof name !== "string" || !name.trim() || name.length > 160) return res.status(400).json({error:"Enter your first and last name."});
- db.prepare("UPDATE settings SET value=? WHERE key='userName'").run(name.trim());
- res.json({ok:true});
+const entries = () =>
+	db
+		.prepare("SELECT e.*,p.name projectName,p.exportName,p.client FROM entries e JOIN projects p ON p.id=e.project ORDER BY date DESC,id DESC")
+		.all()
+		.map((entry) => ({ ...entry, user: userName() }));
+app.post("/api/profile", (req, res) => {
+	const name = req.body.userName;
+	if (typeof name !== "string" || !name.trim() || name.length > 160) return res.status(400).json({ error: "Enter your first and last name." });
+	db.prepare("UPDATE settings SET value=? WHERE key='userName'").run(name.trim());
+	res.json({ ok: true });
 });
 app.get("/api/data", (_, res) =>
 	res.json({
@@ -82,7 +88,7 @@ function validate(v) {
 		typeof v.description === "string" &&
 		v.description.trim().length > 0 &&
 		v.description.length <= 2000 &&
-				/^\d{4}-\d{2}-\d{2}$/.test(v.date) &&
+		/^\d{4}-\d{2}-\d{2}$/.test(v.date) &&
 		!isNaN(Date.parse(v.date)) &&
 		new Date(v.date).toISOString().slice(0, 10) === v.date &&
 		Number.isFinite(Number(v.hours)) &&
@@ -132,23 +138,33 @@ app.post("/api/export", async (req, res, next) => {
 		const wb = await XlsxPopulate.fromFileAsync(path.join(root, "template.xlsx"));
 		const sheet = wb.sheet("Report");
 		if (!sheet) return res.status(400).json({ error: 'The template must contain a "Report" sheet.' });
-        // Keep the template header; discard old examples and their inherited styles.
-        const lastRow = Math.max(sheet.usedRange()?.endCell().rowNumber() || 1, rows.length + 1);
-        sheet.range(`A2:G${lastRow}`).clear();
-        sheet.range(`A2:G${rows.length + 1}`).style({fontFamily:"Calibri",fontSize:11,bold:false,italic:false,fontColor:"000000",verticalAlignment:"center",wrapText:true});
+		// Keep the template header; discard old examples and their inherited styles.
+		const lastRow = Math.max(sheet.usedRange()?.endCell().rowNumber() || 1, rows.length + 1);
+		sheet.range(`A2:G${lastRow}`).clear();
+		sheet.range(`A2:G${rows.length + 1}`).style({ fontFamily: "Calibri", fontSize: 11, bold: false, italic: false, fontColor: "000000", verticalAlignment: "center", wrapText: true });
 		rows.forEach((e, i) => {
 			const date = new Date(e.date + "T00:00:00Z");
 			sheet.cell(i + 2, 1).value([[e.exportName, e.client, e.description, e.user, e.tag, (date.getTime() - Date.UTC(1899, 11, 30)) / 86400000, e.hours]]);
 			sheet.cell(i + 2, 6).style("numberFormat", "dd/mm/yyyy");
 			sheet.cell(i + 2, 7).style("numberFormat", "0.00");
 		});
-        // Exports contain only the report, even if an older template has mapping sheets.
-        for (const name of ["Mappa Cliente-Progetto", "Mappa Progetto-Tags"]) {
-            if (wb.sheet(name)) wb.deleteSheet(name);
-        }
+		// Exports contain only the report, even if an older template has mapping sheets.
+		for (const name of ["Mappa Cliente-Progetto", "Mappa Progetto-Tags"]) {
+			if (wb.sheet(name)) wb.deleteSheet(name);
+		}
 		const buffer = await wb.outputAsync(protect ? { password } : {});
 		res.setHeader("Content-Type", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
-		res.setHeader("Content-Disposition", `attachment; filename="Timesheet v1.0 - ${userName().split(/\s+/).map(part=>part[0]).join("").replace(/[^a-zA-Z]/g,"").toUpperCase() || "IN"} - ${to.split("-").reverse().join("-")}.xlsx"`);
+		res.setHeader(
+			"Content-Disposition",
+			`attachment; filename="Timesheet v1.0 - ${
+				userName()
+					.split(/\s+/)
+					.map((part) => part[0])
+					.join("")
+					.replace(/[^a-zA-Z]/g, "")
+					.toUpperCase() || "IN"
+			} - ${to.split("-").reverse().join("-")}.xlsx"`,
+		);
 		res.send(buffer);
 	} catch (e) {
 		next(e);

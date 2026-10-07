@@ -215,3 +215,35 @@
     display: none;
   }
 }
+
+.activity-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 12px;
+  margin-top: 18px;
+  color: #969bad;
+  font-size: 11px;
+}
+.activity-pagination nav {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+.activity-pagination nav button {
+  width: auto;
+  margin: 0;
+  padding: 9px 12px;
+  font-size: 11px;
+  background: #1c1d24;
+  color: #d4d4e0;
+}
+.activity-pagination nav button:disabled {
+  cursor: default;
+  opacity: 0.4;
+}
+.activity {
+  scroll-margin-top: 20px;
+}

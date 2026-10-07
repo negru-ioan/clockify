@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useRef, useState } from "react";
 import {
   Search,
   Clock3,
@@ -23,6 +23,9 @@ export function ActivityList({
   onDelete,
 }: Props) {
   const [search, setSearch] = useState("");
+  const [page, setPage] = useState(1);
+  const listRef = useRef<HTMLElement>(null);
+  const pageSize = 20;
   const filtered = entries
     .filter((e) =>
       `${e.description} ${e.tag} ${e.projectName} ${e.client}`
@@ -70,9 +73,17 @@ export function ActivityList({
     });
     dayColors.set(day, groups);
   });
-  const days = [...new Set(filtered.map((e) => e.date))];
+  const pageCount = Math.max(1, Math.ceil(filtered.length / pageSize));
+  const currentPage = Math.min(page, pageCount);
+  const start = (currentPage - 1) * pageSize;
+  const visible = filtered.slice(start, start + pageSize);
+  const days = [...new Set(visible.map((e) => e.date))];
+  function changePage(next: number) {
+    setPage(next);
+    listRef.current?.scrollIntoView({ behavior: "smooth", block: "start" });
+  }
   return (
-    <section className="activity">
+    <section className="activity" ref={listRef}>
       <div className="activity-heading">
         <div>
           <h2>{report ? "All activities" : "Your activities"}</h2>
@@ -84,7 +95,10 @@ export function ActivityList({
             aria-label="Search activities"
             placeholder="Search activities…"
             value={search}
-            onChange={(e) => setSearch(e.target.value)}
+            onChange={(e) => {
+              setSearch(e.target.value);
+              setPage(1);
+            }}
           />
         </div>
       </div>
@@ -93,8 +107,16 @@ export function ActivityList({
           <div className="empty-icon">
             <Clock3 size={28} />
           </div>
-          <h3>Every day starts with an activity.</h3>
-          <p>Add an activity in Time tracker to start your timesheet.</p>
+          <h3>
+            {search
+              ? "No matching activities"
+              : "Every day starts with an activity."}
+          </h3>
+          <p>
+            {search
+              ? "Try a different search. All saved activities are searched."
+              : "Add an activity in Time tracker to start your timesheet."}
+          </p>
           <span>
             REVO <ChevronRight size={12} /> OVERX Vendite
           </span>
@@ -113,10 +135,10 @@ export function ActivityList({
                     .filter((e) => e.date === day)
                     .reduce((s, e) => s + e.hours, 0),
                 )}{" "}
-                hours
+                hours {search ? "matching this day" : "total this day"}
               </span>
             </div>
-            {filtered
+            {visible
               .filter((e) => e.date === day)
               .map((e) => (
                 <div className="entry-row" key={e.id}>
@@ -174,6 +196,37 @@ export function ActivityList({
               ))}
           </div>
         ))
+      )}
+      {filtered.length > 0 && (
+        <div className="activity-pagination">
+          <span aria-live="polite">
+            Showing {start + 1}–{Math.min(start + pageSize, filtered.length)} of{" "}
+            {filtered.length} activities
+          </span>
+          {pageCount > 1 && (
+            <nav aria-label="Activity pagination">
+              <button
+                type="button"
+                className="secondary"
+                disabled={currentPage === 1}
+                onClick={() => changePage(currentPage - 1)}
+              >
+                Previous
+              </button>
+              <span>
+                Page {currentPage} of {pageCount}
+              </span>
+              <button
+                type="button"
+                className="secondary"
+                disabled={currentPage === pageCount}
+                onClick={() => changePage(currentPage + 1)}
+              >
+                Next
+              </button>
+            </nav>
+          )}
+        </div>
       )}
     </section>
   );
