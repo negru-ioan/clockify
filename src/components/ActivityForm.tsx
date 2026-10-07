@@ -112,18 +112,18 @@ export function ActivityForm({
 
         <div className="form-grid form-grid-three">
           <SelectSearch
-            label="Tag"
-            name="tag"
-            value={form.values.tag}
-            placeholder="Select a tag"
-            options={(p?.tags || []).map((tag) => ({ value: tag, label: tag }))}
-            onChange={(tag) => {
-              void form.setFieldValue("tag", tag);
+            label="Client"
+            name="client"
+            value={form.values.client}
+            options={data.clients.map((c) => ({ value: c, label: c }))}
+            onChange={(client) => {
+              void form.setValues({
+                ...form.values,
+                client,
+                project: "",
+                tag: "",
+              });
             }}
-            onBlur={() => {
-              void form.setFieldTouched("tag", true);
-            }}
-            error={form.touched.tag ? form.errors.tag : undefined}
           />
 
           <SelectSearch
@@ -147,18 +147,18 @@ export function ActivityForm({
           />
 
           <SelectSearch
-            label="Client"
-            name="client"
-            value={form.values.client}
-            options={data.clients.map((c) => ({ value: c, label: c }))}
-            onChange={(client) => {
-              void form.setValues({
-                ...form.values,
-                client,
-                project: "",
-                tag: "",
-              });
+            label="Tag"
+            name="tag"
+            value={form.values.tag}
+            placeholder="Select a tag"
+            options={(p?.tags || []).map((tag) => ({ value: tag, label: tag }))}
+            onChange={(tag) => {
+              void form.setFieldValue("tag", tag);
             }}
+            onBlur={() => {
+              void form.setFieldTouched("tag", true);
+            }}
+            error={form.touched.tag ? form.errors.tag : undefined}
           />
         </div>
         <div className="form-footer">
