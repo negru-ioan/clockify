@@ -69,7 +69,7 @@ export default function App() {
 
   return (
     <div className="app">
-      <Sidebar view={view} onNavigate={setView} />
+      <Sidebar view={view} onNavigate={setView} userName={data.userName ?? "User"} />
       <main>
         <header>
           <div className="breadcrumb">

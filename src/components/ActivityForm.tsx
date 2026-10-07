@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { parseDuration, normalizeTime } from "../lib/duration";
-import { Plus, ShieldCheck } from "lucide-react";
+import { Plus, ShieldCheck, Pencil } from "lucide-react";
 import type { Data } from "../types";
 import type { ActivityForm as FormState } from "../hooks/useActivityForm";
 import "./ActivityForm.css";
@@ -15,6 +15,7 @@ export function ActivityForm({
   state: FormState;
 }) {
   const { form, defaults, project: p, saving, changeTime, changeHours } = state;
+  const formID = form.values.id;
 
   useEffect(() => {
 		function submitShortcut(event: KeyboardEvent) {
@@ -39,20 +40,11 @@ export function ActivityForm({
 
   return (
     <section className="entry-card">
-      <div className="section-heading">
-        <div>
-          <span className="mini-icon">
-            <Plus size={18} />
-          </span>
-          <h2>{form.values.id ? "Edit activity" : "New activity"}</h2>
-        </div>
-        <span className="pill">Manual entry</span>
-      </div>
       <form onSubmit={form.handleSubmit}>
         <DescriptionSearch
           value={form.values.description}
           entries={data.entries}
-          excludeId={form.values.id}
+          excludeId={formID}
           onChange={(description) => {
             void form.setFieldValue("description", description);
           }}
@@ -180,13 +172,17 @@ export function ActivityForm({
             error={form.touched.tag ? form.errors.tag : undefined}
           />
         </div>
+
         <div className="form-footer">
-          <p>
-            <ShieldCheck size={15} />
-            Use technical or professional descriptions only.
-          </p>
+					<div>
+						<span className="mini-icon">
+							{formID ? <Pencil size={15} /> : <Plus size={18} />}
+						</span>
+						<h2>{formID ? "Edit activity" : "New activity"}</h2>
+					</div>
+
           <div>
-            {!!form.values.id && (
+            {!!formID && (
               <button
                 type="button"
                 className="secondary"
@@ -213,11 +209,7 @@ export function ActivityForm({
               aria-keyshortcuts="Shift+Enter"
             >
               <Plus size={17} />
-              {saving
-                ? "Saving…"
-                : form.values.id
-                  ? "Save changes"
-                  : "Add activity"}
+              {saving ? "Saving…" : formID ? "Save changes" : "Add activity"}
             </button>
           </div>
         </div>

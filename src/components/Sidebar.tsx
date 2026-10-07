@@ -10,9 +10,11 @@ import "./Sidebar.css";
 export function Sidebar({
   view,
   onNavigate: setView,
+  userName,
 }: {
   view: View;
   onNavigate: (view: View) => void;
+  userName: string;
 }) {
   return (
     <aside>
@@ -61,7 +63,7 @@ export function Sidebar({
         <div className="profile">
           <div className="avatar">IN</div>
           <div>
-            <strong>Ioan Negru</strong>
+            <strong>{userName}</strong>
             <small>Personal workspace</small>
           </div>
         </div>
