@@ -35,6 +35,41 @@ export function ActivityList({
         (a.startTime || "99:99").localeCompare(b.startTime || "99:99") ||
         a.id - b.id,
     );
+  const taskKey = (entry: Entry) =>
+    JSON.stringify([
+      entry.project,
+      entry.client,
+      entry.description.trim().toLowerCase(),
+      entry.tag,
+      entry.user.trim().toLowerCase(),
+    ]);
+  const colors = [
+    "#79c9ab",
+    "#e8b56c",
+    "#78b9ed",
+    "#ed94b2",
+    "#b5cd78",
+    "#e6a17b",
+    "#81cccd",
+  ];
+  const dayCounts = new Map<string, Map<string, number>>();
+  // Count each day separately, using all entries so search does not alter colors.
+  [...entries]
+    .sort((a, b) => a.id - b.id)
+    .forEach((entry) => {
+      const counts = dayCounts.get(entry.date) || new Map<string, number>();
+      const key = taskKey(entry);
+      counts.set(key, (counts.get(key) || 0) + 1);
+      dayCounts.set(entry.date, counts);
+    });
+  const dayColors = new Map<string, Map<string, string>>();
+  dayCounts.forEach((counts, day) => {
+    const groups = new Map<string, string>();
+    counts.forEach((count, key) => {
+      if (count > 1) groups.set(key, colors[groups.size % colors.length]);
+    });
+    dayColors.set(day, groups);
+  });
   const days = [...new Set(filtered.map((e) => e.date))];
   return (
     <section className="activity">
@@ -85,7 +120,14 @@ export function ActivityList({
               .filter((e) => e.date === day)
               .map((e) => (
                 <div className="entry-row" key={e.id}>
-                  <div className="row-mark" />
+                  <div
+                    className="row-mark"
+                    style={{
+                      backgroundColor:
+                        dayColors.get(day)?.get(taskKey(e)) || "#aa98ef",
+                    }}
+                    title="Matching tasks on this day share a color"
+                  />
                   <div className="row-text">
                     <strong>{e.description}</strong>
                     <div>

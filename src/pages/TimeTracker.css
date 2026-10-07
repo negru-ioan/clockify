@@ -1,3 +1,27 @@
 .time-tracker-page {
   min-width: 0;
 }
+
+.time-tracker-page .stats {
+  margin-bottom: 18px;
+}
+
+.time-tracker-page .stats > div {
+  padding: 12px 18px;
+}
+
+.time-tracker-page .stats strong {
+  font-size: 25px;
+  margin: 6px 0 3px;
+}
+
+@media (max-width: 700px) {
+  .time-tracker-page .stats > div {
+    padding: 9px 10px;
+  }
+
+  .time-tracker-page .stats strong {
+    font-size: 21px;
+    margin: 4px 0 2px;
+  }
+}
