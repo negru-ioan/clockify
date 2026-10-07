@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { parseDuration, normalizeTime } from "../lib/duration";
 import { Plus, ShieldCheck } from "lucide-react";
 import type { Data } from "../types";
@@ -14,10 +15,28 @@ export function ActivityForm({
   state: FormState;
 }) {
   const { form, defaults, project: p, saving, changeTime, changeHours } = state;
+
+  useEffect(() => {
+		function submitShortcut(event: KeyboardEvent) {
+			if (event.key !== "Enter" || !event.shiftKey || event.ctrlKey || event.metaKey || event.altKey || event.isComposing) {
+				return;
+			}
+
+			// This component is mounted only on Time tracker. Leave dialogs to their own controls.
+			if (document.querySelector('[role="dialog"]')) return;
+			event.preventDefault();
+			event.stopPropagation();
+			if (!event.repeat && !saving && !form.isSubmitting) void form.submitForm();
+		}
+		window.addEventListener("keydown", submitShortcut, true);
+		return () => window.removeEventListener("keydown", submitShortcut, true);
+	}, [form.submitForm, form.isSubmitting, saving]);
+
   const fieldError = (name: keyof typeof defaults) =>
     form.touched[name] && form.errors[name] ? (
       <small className="error">{form.errors[name]}</small>
     ) : null;
+
   return (
     <section className="entry-card">
       <div className="section-heading">
@@ -186,7 +205,13 @@ export function ActivityForm({
                 Cancel
               </button>
             )}
-            <button className="primary" disabled={saving} type="submit">
+            <button
+              className="primary"
+              disabled={saving || form.isSubmitting}
+              type="submit"
+              title="Submit activity (Shift+Enter)"
+              aria-keyshortcuts="Shift+Enter"
+            >
               <Plus size={17} />
               {saving
                 ? "Saving…"

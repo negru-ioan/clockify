@@ -69,6 +69,7 @@ export function useActivityForm(
             ...v,
             id: 0,
             description: "",
+            tag: "",
             hours: "",
             startTime: "",
             endTime: "",
