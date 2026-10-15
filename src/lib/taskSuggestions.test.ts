@@ -28,6 +28,15 @@ test("description matches case-insensitive parts, removes duplicates and exclude
 	);
 	assert.equal(suggestTasks("light", [entry], 1).length, 0);
 });
+test("search matches tags and terms across description and tag", () => {
+	for (const query of ["BASKET", "bask", "light basket", "basket 9235"]) {
+		assert.deepEqual(suggestTasks(query, [entry]).map((e) => e.id), [1]);
+	}
+	assert.equal(suggestTasks("basket unrelated", [entry]).length, 0);
+	assert.equal(suggestTasks("basket", [entry], 1).length, 0);
+	assert.equal(suggestTasks("REVO", [entry]).length, 0);
+	assert.equal(suggestTasks("basket", [{ ...entry, tag: "" }]).length, 0);
+});
 test("reusing a task preserves identity, date, duration and optional times", () => {
 	const values: ActivityValues = { id: 7, description: "light", client: "INTERNO", project: "5", tag: "Other", user: "User", date: "2026-10-06", hours: "1:15", startTime: "13:00", endTime: "14:15" };
 	assert.deepEqual(applyTaskSuggestion(values, entry), { ...values, description: entry.description, client: entry.client, project: "3", tag: entry.tag, user: entry.user });

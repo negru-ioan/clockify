@@ -11,11 +11,10 @@ export function suggestTasks(
   return [...entries]
     .sort((a, b) => b.date.localeCompare(a.date) || b.id - a.id)
     .filter((entry) => {
-      if (
-        entry.id === excludeId ||
-        !terms.every((term) => entry.description.toLowerCase().includes(term))
-      )
+      const searchableFields = [entry.description, entry.tag].map((field) => field.toLowerCase());
+			if (entry.id === excludeId || !terms.every((term) => searchableFields.some((field) => field.includes(term)))) {
         return false;
+      }
       const key = JSON.stringify([
         entry.description.toLowerCase(),
         entry.project,
