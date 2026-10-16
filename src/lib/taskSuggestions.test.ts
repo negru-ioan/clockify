@@ -9,7 +9,7 @@ const entry: Entry = {
 	project: 3,
 	projectName: "OVERX Vendite",
 	tag: "Basket",
-	user: "Ioan Negru",
+	user: "John Doe",
 	date: "2026-10-05",
 	hours: 2.5,
 	startTime: "09:00",

@@ -23,8 +23,8 @@ test("entry CRUD, associations, period filtering and encrypted template export",
  assert.equal((await request("profile", {userName:"Test Person"})).status,200);
  assert.equal((await (await fetch(base+"data")).json()).userName,"Test Person");
  assert.equal((await request("profile", {userName:""})).status,400);
- await request("profile", {userName:"Ioan Negru"});
-		const entry = { description: "OM-9235 - OCM 2222: Appendici Light", user: "Ioan Negru", project: p.id, tag: "Basket", date: "2026-10-05", hours: 2.5, startTime: "09:00", endTime: "11:30" };
+ await request("profile", {userName:"John Doe"});
+		const entry = { description: "OM-9235 - OCM 2222: Appendici Light", user: "John Doe", project: p.id, tag: "Basket", date: "2026-10-05", hours: 2.5, startTime: "09:00", endTime: "11:30" };
 		assert.equal((await request("entries", { ...entry, tag: "invalid" })).status, 400);
 		assert.equal((await request("entries", { ...entry, hours: 25 })).status, 400);
 		assert.equal((await request("entries", { ...entry, date: "2026-02-30" })).status, 400);
@@ -45,7 +45,7 @@ test("entry CRUD, associations, period filtering and encrypted template export",
 		const wb = await XlsxPopulate.fromDataAsync(buf, { password: range.password });
 		const sheet = wb.sheet("Report");
 		assert.equal(sheet.cell("A2").value(), "OVERX_Vendite");
-		assert.equal(sheet.cell("D2").value(), "Ioan Negru");
+		assert.equal(sheet.cell("D2").value(), "John Doe");
 		assert.equal(sheet.cell("G2").value(), 3.25);
 		assert.equal(typeof sheet.cell("F2").value(), "number");
 		assert.equal(sheet.cell("A4").value(), undefined);

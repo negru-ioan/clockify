@@ -28,7 +28,7 @@ if (!db.prepare("SELECT COUNT(*) n FROM clients").get().n) {
 }
 db.exec("CREATE TABLE IF NOT EXISTS settings(key TEXT PRIMARY KEY,value TEXT NOT NULL)");
 db.prepare("INSERT OR IGNORE INTO settings VALUES('userName',?)").run(
-	db.prepare("SELECT user FROM entries WHERE user IS NOT NULL AND user != '' ORDER BY id DESC LIMIT 1").get()?.user || "Ioan Negru",
+	db.prepare("SELECT user FROM entries WHERE user IS NOT NULL AND user != '' ORDER BY id DESC LIMIT 1").get()?.user || "John Doe",
 );
 const userName = () => db.prepare("SELECT value FROM settings WHERE key='userName'").get().value;
 export const app = express();

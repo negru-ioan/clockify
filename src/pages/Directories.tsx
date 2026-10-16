@@ -24,7 +24,7 @@ export function Directories({
     <>
       <ProfileSettings
         key={data.userName}
-        name={data.userName || "Ioan Negru"}
+        name={data.userName || "John Doe"}
         onSaved={onSaved}
         notify={notify}
       />

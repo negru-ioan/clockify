@@ -19,7 +19,7 @@ export function useActivityForm(
   const defaults: ActivityValues = {
     id: 0,
     description: "",
-    user: data.userName || "Ioan Negru",
+    user: data.userName || "John Doe",
     client: "REVO",
     project: "",
     tag: "",
