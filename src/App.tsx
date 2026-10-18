@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import {
   ArrowUpRight,
   ChevronRight,
@@ -45,6 +45,24 @@ const pages = {
 export default function App() {
   const { data, reload, message, notify } = useWorkspace();
   const [view, setView] = useState<View>("tracker");
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+
+  useEffect(() => {
+    function handleSidebarShortcut(event: KeyboardEvent) {
+      if (
+        (event.ctrlKey || event.metaKey) &&
+        !event.altKey &&
+        !event.shiftKey &&
+        event.key.toLowerCase() === "b"
+      ) {
+        event.preventDefault();
+        if (!event.repeat) setSidebarCollapsed((collapsed) => !collapsed);
+      }
+    }
+    window.addEventListener("keydown", handleSidebarShortcut);
+    return () => window.removeEventListener("keydown", handleSidebarShortcut);
+  }, []);
+
   const [exportOpen, setExportOpen] = useState(false);
   const [deleteId, setDeleteId] = useState<number | null>(null);
   const form = useActivityForm(data, reload, notify);
@@ -68,8 +86,14 @@ export default function App() {
   }
 
   return (
-    <div className="app">
-      <Sidebar view={view} onNavigate={setView} userName={data.userName ?? "User"} />
+    <div className={`app${sidebarCollapsed ? " sidebar-collapsed" : ""}`}>
+      <Sidebar
+        view={view}
+        onNavigate={setView}
+        userName={data.userName ?? "User"}
+        collapsed={sidebarCollapsed}
+        onToggle={() => setSidebarCollapsed((collapsed) => !collapsed)}
+      />
       <main>
         <header>
           <div className="breadcrumb">
