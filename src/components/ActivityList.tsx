@@ -50,10 +50,10 @@ export function ActivityList({
     "#79c9ab",
     "#e8b56c",
     "#78b9ed",
-    "#ed94b2",
     "#b5cd78",
     "#e6a17b",
     "#81cccd",
+    "#ed94b2",
   ];
   const dayCounts = new Map<string, Map<string, number>>();
   // Count each day separately, using all entries so search does not alter colors.

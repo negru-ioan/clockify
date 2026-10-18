@@ -41,16 +41,6 @@ export function Sidebar({
           <span className="nav-text">Time tracker</span>
         </button>
         <button
-          className={view === "reports" ? "active" : ""}
-          onClick={() => setView("reports")}
-          aria-label="Report"
-          title="Report"
-          aria-current={view === "reports" ? "page" : undefined}
-        >
-          <BarChart3 size={19} />
-          <span className="nav-text">Report</span>
-        </button>
-        <button
           className={view === "calendar" ? "active" : ""}
           onClick={() => setView("calendar")}
           aria-label="Calendar"
@@ -59,6 +49,16 @@ export function Sidebar({
         >
           <CalendarDays size={19} />
           <span className="nav-text">Calendar</span>
+        </button>
+        <button
+          className={view === "reports" ? "active" : ""}
+          onClick={() => setView("reports")}
+          aria-label="Report"
+          title="Report"
+          aria-current={view === "reports" ? "page" : undefined}
+        >
+          <BarChart3 size={19} />
+          <span className="nav-text">Report</span>
         </button>
         <button
           className={view === "settings" ? "active" : ""}

@@ -158,7 +158,8 @@
   align-items: center;
   gap: 15px;
   border-top: 1px solid #30313b;
-  padding: 15px 0;
+  border-left: 4px solid;
+  padding: 15px 0 15px 12px;
   font-size: 12px;
 }
 .calendar-detail small {
@@ -168,13 +169,105 @@
   font-size: 10px;
 }
 .calendar-detail > div {
+  flex: 1;
   min-width: 0;
   overflow-wrap: anywhere;
 }
 .calendar-detail > span {
   white-space: nowrap;
 }
+.calendar-detail > button {
+  flex-shrink: 0;
+}
+.calendar-day-breakdown {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 140px;
+  gap: 24px;
+  align-items: stretch;
+}
+.calendar-day-activities {
+  min-width: 0;
+  display: grid;
+  gap: 8px;
+}
+.calendar-time-tower {
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  min-height: 0;
+}
+.calendar-time-tower figcaption {
+  font-size: 12px;
+  font-weight: 600;
+}
+.calendar-time-tower > small {
+  color: #9093a4;
+  font-size: 11px;
+}
+.calendar-time-stack {
+  display: flex;
+  flex-direction: column;
+  width: 64px;
+  flex: 1;
+  min-height: 24px;
+  border-radius: 8px;
+  overflow: hidden;
+  background: #30313b;
+}
+.calendar-timeline {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  min-height: 240px;
+  gap: 10px;
+}
+.calendar-time-stack.is-timeline {
+  position: relative;
+  background: repeating-linear-gradient(135deg, #202129 0, #202129 5px, #41434f 5px, #41434f 7px);
+}
+.calendar-gap-legend {
+  text-align: center;
+  line-height: 1.5;
+}
+.is-timeline .calendar-time-segment {
+  width: 100%;
+}
+.calendar-time-axis {
+  position: relative;
+  width: 60px;
+  flex-shrink: 0;
+  font-size: 10px;
+  color: #9194a6;
+  font-variant-numeric: tabular-nums;
+}
+.calendar-time-axis span {
+  position: absolute;
+  transform: translateY(-50%);
+  white-space: nowrap;
+}
+.calendar-time-axis span:first-child { transform: none; }
+.calendar-time-axis span:last-child { transform: translateY(-100%); }
+.calendar-time-segment {
+  flex-basis: 0;
+  min-height: 0;
+  flex-shrink: 0;
+}
 @media (max-width: 700px) {
+  .calendar-day-breakdown {
+    grid-template-columns: minmax(0, 1fr) 110px;
+    gap: 12px;
+  }
+  .calendar-time-stack {
+    width: 44px;
+  }
+  .calendar-detail {
+    flex-wrap: wrap;
+  }
+  .calendar-detail > div {
+    flex-basis: 100%;
+  }
   .calendar-heading h1 {
     font-size: 24px;
   }
