@@ -45,7 +45,7 @@ const pages = {
 export default function App() {
   const { data, reload, message, notify } = useWorkspace();
   const [view, setView] = useState<View>("tracker");
-  const [sidebarCollapsed, setSidebarCollapsed] = useState(false);
+  const [sidebarCollapsed, setSidebarCollapsed] = useState(localStorage.getItem("sidebarCollapsed") === "true");
 
   useEffect(() => {
     function handleSidebarShortcut(event: KeyboardEvent) {
@@ -56,7 +56,12 @@ export default function App() {
         event.key.toLowerCase() === "b"
       ) {
         event.preventDefault();
-        if (!event.repeat) setSidebarCollapsed((collapsed) => !collapsed);
+        if (!event.repeat) {
+          setSidebarCollapsed((collapsed) => {
+          localStorage.setItem("sidebarCollapsed", String(!collapsed));
+            return !collapsed;
+          });
+        }
       }
     }
     window.addEventListener("keydown", handleSidebarShortcut);

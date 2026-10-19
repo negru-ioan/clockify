@@ -181,7 +181,7 @@
 }
 .calendar-day-breakdown {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 140px;
+  grid-template-columns: minmax(0, 1fr) 110px;
   gap: 24px;
   align-items: stretch;
 }
@@ -236,7 +236,7 @@
 }
 .calendar-time-axis {
   position: relative;
-  width: 60px;
+  width: 30px;
   flex-shrink: 0;
   font-size: 10px;
   color: #9194a6;
