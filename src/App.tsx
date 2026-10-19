@@ -155,7 +155,7 @@ export default function App() {
               onDelete={setDeleteId}
             />
           )}
-          {view === "calendar" && <Calendar entries={data.entries} onEdit={edit} />}
+          {view === "calendar" && <Calendar entries={data.entries} onEdit={edit} onDelete={setDeleteId} />}
           {view === "settings" && (
             <Directories data={data} onSaved={reload} notify={notify} />
           )}

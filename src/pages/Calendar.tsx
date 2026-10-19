@@ -1,5 +1,5 @@
 import { useMemo, useState } from "react";
-import { AlertTriangle, ChevronLeft, ChevronRight, Pencil } from "lucide-react";
+import { AlertTriangle, ChevronLeft, ChevronRight, Pencil, Trash, Trash2 } from "lucide-react";
 import type { Entry } from "../types";
 import { today, fmt, dateLabel } from "../lib/dates";
 import "./Calendar.css";
@@ -12,7 +12,7 @@ const minutes = (time: string) => {
 };
 const clockLabel = (minute: number) => `${String(Math.floor(minute / 60) % 24).padStart(2, "0")}:00${minute >= 1440 ? " +1d" : ""}`;
 
-export function Calendar({ entries, onEdit }: { entries: Entry[]; onEdit: (entry: Entry) => void }) {
+export function Calendar({ entries, onEdit, onDelete }: { entries: Entry[]; onEdit: (entry: Entry) => void; onDelete?: (id: number) => void }) {
 	const [month, setMonth] = useState(() => new Date(new Date().getFullYear(), new Date().getMonth(), 1));
 	const [selected, setSelected] = useState(today());
 	const totals = useMemo(
@@ -30,42 +30,42 @@ export function Calendar({ entries, onEdit }: { entries: Entry[]; onEdit: (entry
 	const monthlyHours = entries.filter((entry) => entry.date.startsWith(prefix)).reduce((sum, entry) => sum + entry.hours, 0);
 	const selectedEntries = entries.filter((entry) => entry.date === selected).sort((a, b) => (a.startTime || "99:99").localeCompare(b.startTime || "99:99") || a.id - b.id);
 	const activityColors = useMemo(() => {
-    // One assignment for the whole workspace, shared by all dates.
-    const palette = ["#729b8b", "#bd9564", "#799bc0", "#af7d95", "#a1aa70", "#8e80ad", "#b67e6c", "#6fa5a8", "#b2a184", "#83916b", "#a8757a", "#7d89a5"];
-    const taskKey = (entry: Entry) => JSON.stringify([
-      entry.project,
-      entry.description.trim().toLowerCase().replace(/\s+/g, " "),
-      entry.tag.trim().toLowerCase(),
-    ]);
-    const tasks = new Map<string, Set<string>>();
-    [...entries].sort((a, b) => a.id - b.id).forEach((entry) => {
-      const task = taskKey(entry);
-      if (!tasks.has(task)) tasks.set(task, new Set());
-      tasks.get(task)!.add(entry.date);
-    });
-    const assigned = new Map<string, number>();
-    const dayColors = new Map<string, Set<number>>();
-    const usage = palette.map(() => 0);
-    const rgb = (hex: string) => [1, 3, 5].map((offset) => parseInt(hex.slice(offset, offset + 2), 16));
-    const distance = (a: number, b: number) => Math.hypot(...rgb(palette[a]).map((value, index) => value - rgb(palette[b])[index]));
-    tasks.forEach((days, task) => {
-      const neighbors = [...days].flatMap((day) => [...(dayColors.get(day) || [])]);
-      // Avoid reusing a color on the same day, then maximize visual separation.
-      const candidates = palette.map((_, index) => ({
-        index,
-        conflicts: neighbors.filter((color) => color === index).length,
-        contrast: neighbors.length ? Math.min(...neighbors.map((color) => distance(index, color))) : 0,
-      })).sort((a, b) => a.conflicts - b.conflicts || b.contrast - a.contrast || usage[a.index] - usage[b.index] || a.index - b.index);
-      const color = candidates[0].index;
-      assigned.set(task, color);
-      usage[color]++;
-      days.forEach((day) => {
-        if (!dayColors.has(day)) dayColors.set(day, new Set());
-        dayColors.get(day)!.add(color);
-      });
-    });
-    return new Map(entries.map((entry) => [entry.id, palette[assigned.get(taskKey(entry))!]]));
-  }, [entries]);
+		// One assignment for the whole workspace, shared by all dates.
+		const palette = ["#729b8b", "#bd9564", "#799bc0", "#af7d95", "#a1aa70", "#8e80ad", "#b67e6c", "#6fa5a8", "#b2a184", "#83916b", "#a8757a", "#7d89a5"];
+		const taskKey = (entry: Entry) => JSON.stringify([entry.project, entry.description.trim().toLowerCase().replace(/\s+/g, " "), entry.tag.trim().toLowerCase()]);
+		const tasks = new Map<string, Set<string>>();
+		[...entries]
+			.sort((a, b) => a.id - b.id)
+			.forEach((entry) => {
+				const task = taskKey(entry);
+				if (!tasks.has(task)) tasks.set(task, new Set());
+				tasks.get(task)!.add(entry.date);
+			});
+		const assigned = new Map<string, number>();
+		const dayColors = new Map<string, Set<number>>();
+		const usage = palette.map(() => 0);
+		const rgb = (hex: string) => [1, 3, 5].map((offset) => parseInt(hex.slice(offset, offset + 2), 16));
+		const distance = (a: number, b: number) => Math.hypot(...rgb(palette[a]).map((value, index) => value - rgb(palette[b])[index]));
+		tasks.forEach((days, task) => {
+			const neighbors = [...days].flatMap((day) => [...(dayColors.get(day) || [])]);
+			// Avoid reusing a color on the same day, then maximize visual separation.
+			const candidates = palette
+				.map((_, index) => ({
+					index,
+					conflicts: neighbors.filter((color) => color === index).length,
+					contrast: neighbors.length ? Math.min(...neighbors.map((color) => distance(index, color))) : 0,
+				}))
+				.sort((a, b) => a.conflicts - b.conflicts || b.contrast - a.contrast || usage[a.index] - usage[b.index] || a.index - b.index);
+			const color = candidates[0].index;
+			assigned.set(task, color);
+			usage[color]++;
+			days.forEach((day) => {
+				if (!dayColors.has(day)) dayColors.set(day, new Set());
+				dayColors.get(day)!.add(color);
+			});
+		});
+		return new Map(entries.map((entry) => [entry.id, palette[assigned.get(taskKey(entry))!]]));
+	}, [entries]);
 	const selectedHours = totals[selected] || 0;
 	const timedEntries = selectedEntries
 		.filter((entry) => entry.startTime && entry.endTime)
@@ -194,6 +194,11 @@ export function Calendar({ entries, onEdit }: { entries: Entry[]; onEdit: (entry
 										<Pencil size={14} />
 										Edit
 									</button>
+									{onDelete && (
+										<button className="icon-button" aria-label="Delete activity" onClick={() => onDelete(entry.id)}>
+											<Trash2 size={16} />
+										</button>
+									)}
 								</div>
 							))}
 						</div>
